@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap");
+
+div.container {
+  margin-top: 50px;
+  position: relative;
+  max-width: 90%;
+  height: 100%;
+
+  overflow: auto;
+
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+input.gridInputs {
+  width: 160px;
+  height: 40px;
+  border-color: black;
+
+  text-align: center;
+}
+
+div.formWrapper {
+  margin-top: 20px;
+}
+
+.gridRows {
+  margin-bottom: 20px;
+  display: grid;
+  grid-auto-flow: column;
+}
+
+.gridCols {
+  text-align: center;
+  padding-top: 10px;
+  margin-right: 20px;
+
+  display: inline-block;
+
+  min-width: 216px;
+  height: 174px;
+  border: 1px solid black;
+}
+
+Button.numberSubmitButton {
+  margin-top: 30px;
+  margin-bottom: 30px;
+
+  width: 300px;
+  border-radius: 15px;
+
+  font-size: 20px;
+  font-family: "Nanum Gothic", sans-serif;
+}

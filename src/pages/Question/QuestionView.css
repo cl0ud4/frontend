@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
+
+.Question-App {
+  font-family: "Nanum Gothic", sans-serif;
+    text-align: center;
+  }
+
+  .title-input{
+    width: 842px;
+    height: 60px;
+    background-color: #F8F8F8;
+    border-radius: 10px;
+    border: none;
+    outline: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+.writer-input{
+  width: 300px;
+  height: 60px;
+  background-color: #F8F8F8;
+  border-radius: 10px;
+  border: none;
+  outline: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-bottom: 5px;
+  float: left;
+}
+  .content-input{
+    width: 842px;
+    height: 500px;
+    margin-top: 5px;
+    background-color: #F8F8F8;
+    border-radius: 10px;
+    border: none;
+    outline: 0;
+    resize: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+  }
+
+  .answer-content-input{
+    width: 842px;
+    height: 250px;
+    margin-top: 5px;
+    background-color: #F8F8F8;
+    border-radius: 10px;
+    border: none;
+    outline: 0;
+    resize: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+  }
+  
+  .input-text{
+    margin-right: 15px;
+  }
+  
+  
+  .view-table {
+    margin-left:auto; 
+    margin-right:auto;
+    z-index: 0;
+  }
+  
+  .view-table th, td{
+    vertical-align : top;
+  }
+  
+  .qna-but{
+    width: 1370px;
+    float: right;
+  }
+  
+  .submit-button:active{
+    font-size: small;
+  }
+  
+  .qna-button:active{
+    font-size: 10px;
+  }
+  
+  .submit-button {
+    background-color: #6860A4;
+    color: white;
+    margin-right: 10px;
+  }
+  
+  .qna-button {
+    border: 0;
+    outline: 0;
+    width: 167px;
+    height: 40px;
+    border-radius: 5px;
+  }
+  
+  .qna-list-write-button{
+    float: right;  
+  }
+  
+  .input-readonly::placeholder{
+    color: black;
+    font-size: 15px;
+  }
+
+  .notice-board{
+    position: relative;
+  }
+
+  .button-table {
+    /* margin-left:auto; 
+    margin-right:auto; */
+    width: 890px;
+    margin: 0 auto;
+  }
+
+  .button-float {
+    float: right;
+  }
+.send-button{
+  margin-right: 10px;
+}

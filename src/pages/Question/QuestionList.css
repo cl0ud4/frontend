@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  .board-table {
+    font-family: "Nanum Gothic", sans-serif;
+    font-size: 15px;
+    width: 100%;
+    border-top: 1px solid #6860A4;
+    border-bottom: 1px solid #6860A4;
+  }
+  
+  .board-table a {
+    color: #333;
+    display: inline-block;
+    line-height: 1.4;
+    word-break: break-all;
+    vertical-align: middle;
+  }
+
+  .board-table a:hover {
+    text-decoration: underline;
+  }
+  
+  .board-table th {
+    text-align: center;
+  }
+  
+  .board-table .th-num {
+    width: 120px;
+    text-align: center;
+  }
+
+  .board-table .th-dep{
+    width: 280px;
+  }
+  
+  .board-table .th-date {
+    width: 120px;
+  }
+  
+  .board-table th, .board-table td {
+    padding: 14px 0;
+  }
+  
+  .board-table tbody td {
+    border-top: 1px solid #e7e7e7;
+    text-align: center;
+  }
+  
+  .board-table tbody th {
+    padding-left: 28px;
+    padding-right: 14px;
+    border-top: 1px solid #e7e7e7;
+    text-align: left;
+  }
+  
+  
+  /* reset */
+  
+  /* * {
+    list-style: none;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  } */
+
+  .board-container {
+    width: 1100px;
+    margin: 0 auto;
+  }
+
+.notice-tbody{
+  font-weight: bold;
+}
+
+.notice-table {
+  position: relative;
+}
+
+.notice-modal {
+  position: absolute;
+  z-index: 2;
+}
+
+.jwt-hidden{
+  display: none;
+}
+
+.button-line{
+  margin-top: 20px;
+}
+
+.q-search-btn{
+  background-color: #6860A4;
+  border: none;
+  color: white;
+  width: 70px;
+  height: 40px;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.q-search-btn:active{
+  font-size: small;
+}

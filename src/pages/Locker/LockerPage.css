@@ -1,0 +1,44 @@
+/* yellow FAF481 */
+/* blue 92E1D4 */
+/* purple 8C52FF */
+/* pink E05E76 */
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap");
+
+div.lockerPage {
+  margin-top: 50px;
+  margin: 0 auto;
+  position: relative;
+  max-width: 90%;
+  height: 100%;
+
+  overflow: auto;
+  font-weight: 700;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+.lockerRow {
+  margin-bottom: 20px;
+  display: grid;
+  grid-auto-flow: column;
+}
+
+.lockerCol {
+  text-align: center;
+  padding-top: 10px;
+  margin-right: 20px;
+
+  display: inline-block;
+
+  min-width: 216px;
+  height: 174px;
+  border: 1px solid black;
+}
+
+div.lockerId {
+  font-size: 24px;
+}
+
+.searchLockerForm {
+  display: inline-block;
+  margin-bottom: 10px;
+}

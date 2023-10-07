@@ -1,0 +1,184 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap");
+
+.page_title {
+  margin-bottom: 10px;
+  margin-top: 40px;
+  font-weight: bold;
+  color: #6860a4;
+  text-align: center;
+}
+
+.logo_signup {
+  position: absolute;
+  width: 63px;
+  height: 63px;
+  left: 26px;
+  top: 27px;
+}
+
+/* signup.css */
+.user {
+  display: flex;
+  float: right; /* 오른쪽 정렬 */
+  padding: 10px;
+  background-color: #fff;
+  color: #6860a4;
+  align-items: center;
+}
+
+.user .userid {
+  margin-right: 20px;
+  font-weight: bold;
+  color: #6860a4;
+}
+
+.user button {
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 5px 5px 10px #ccc;
+  color: #fff;
+  background-color: #6860a4;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 전체 페이지 스타일 */
+.Signup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+/* 폼 그룹 스타일 */
+
+.id_div {
+  align-items: center;
+  display: flex;
+}
+
+.new_user_id {
+  width: 450px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  background-color: #ffffff;
+}
+
+.id_div .id_check {
+  float: right;
+  margin-right: 10px;
+  position: relative;
+  color: #6860a4;
+  background-color: #ffffff;
+  border: #6860a4;
+  border-width: 4px;
+}
+
+.select_department {
+  width: 450px;
+}
+
+.number {
+  width: 450px;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.new_user_phoneNumber {
+  width: 450px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  background-color: #ffffff;
+}
+
+.status {
+  margin-bottom: 20px;
+  display: inline-block;
+  width: 450px;
+}
+
+.department {
+  margin-bottom: 20px;
+  align-items: "center";
+  width: 450px;
+}
+
+.password {
+  margin-bottom: 20px;
+}
+
+.new_user_password {
+  width: 450px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  background-color: #ffffff;
+}
+
+.password_check {
+  margin-bottom: 20px;
+}
+
+.new_user_password_check {
+  width: 450px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  background-color: #ffffff;
+}
+
+/* 레이블 스타일 */
+.signup_class label {
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* 버튼 스타일 */
+form .signup_class button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  /* cursor: pointer; */
+}
+
+/* 변경 버튼 스타일 */
+.signup_class button[type="submit"] {
+  background-color: #6860a4;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.signup_class select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+}
+
+
+
+.user-modal modal-footer{
+  display: left;
+  justify-content: left;
+}
+
+

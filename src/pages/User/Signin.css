@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap");
+
+/* signin.css */
+
+/* 전체 페이지 스타일 */
+.Signin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+/* 폼 스타일 */
+form .signin_class{
+  width: 500px;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.signin_class label {
+    font-weight: bold;
+    display: inline-block;
+  }
+
+/* 폼 그룹 스타일 */
+.id {
+  margin-bottom: 20px;
+  width: 500px;
+}
+
+.id .input_id {
+  width: 450px;
+  width: 90%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  background-color: #ffffff;
+}
+
+.password {
+  margin-bottom: 20px;
+  width: 500px;
+}
+
+.password .input_password {
+  width: 450px;
+  width: 90%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  background-color: #ffffff;
+}
+
+.buttons {
+  float: right; /* 오른쪽 정렬 */
+  /* 좌우 정렬 */
+  display: flex;
+  padding-right: 40px;
+
+}
+
+.buttons .signup_button {
+  width: 120px;
+}
+
+.login_button {
+  display: inline-block;
+  width: 100px;
+}
+
+.white_button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-block;
+  color: #6860a4;
+  width: 110px;
+  background-color: #fff;
+  border: #6860a4 1px solid;
+  margin-right: 10px;
+}
+
+.submit_login_button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-block;
+  color: #fff;
+  background-color: #6860a4;
+  margin-right: 10px;
+}

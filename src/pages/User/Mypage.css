@@ -1,0 +1,231 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap");
+
+/* Mypage.css */
+.user {
+  display: flex;
+  float: right; /* 오른쪽 정렬 */
+  padding: 10px;
+  background-color: #fff;
+  color: #6860a4;
+  align-items: center;
+}
+
+.user .userid {
+  margin-right: 20px;
+  font-weight: bold;
+  color: #6860a4;
+}
+
+.user button {
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 5px 5px 10px #ccc;
+  color: #fff;
+  background-color: #6860a4;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 전체 페이지 스타일 */
+.Mypage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+/* 폼 스타일 */
+form .mypage_class{
+  width: 500px;
+  padding: 20px;
+  border-radius: 5px;
+  /* background-color: red; */
+  display: block;
+}
+
+/* 폼 그룹 스타일 */
+.info {
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.my_id {
+  margin-bottom: 20px;
+  margin-right: 20px;
+  display: inline-block;
+}
+
+.my_department {
+  margin-bottom: 20px;
+  margin-left: 20px;
+  display: inline-block;
+}
+
+.my_number {
+  width: 380px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  display: inline-block;
+}
+
+.my_number_div {
+  display: inline-block;
+}
+
+.number_button {
+  float: right; 
+  margin-top: 30px ;  
+  background-color: #6860a4;
+  color: #fff;
+}
+
+.locker-row {
+  width: 170px;
+  /* 좌우 정렬 */
+  margin-bottom: 20px;
+  margin-right: 40px;
+  margin-left: 10px;
+  display: inline-block;
+}
+
+.locker-col {
+  width: 170px;
+  /* 좌우 정렬 */
+  margin-bottom: 20px;
+  margin-left: 10px;
+  display: inline-block;
+}
+
+.locker {
+  width: 450px;
+  margin-bottom: 20px;
+}
+
+.deposit {
+  width: 450px;
+  margin-bottom: 50px;
+}
+
+.mypage_phoneNumber {
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+.goodbye {
+  background-color: #6860a4;
+  color: #ffffff;
+  border: none;
+}
+
+/* 레이블 스타일 */
+.mypage_class label {
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* 수정 가능한 입력 필드 하단 버튼 스타일 */
+.edit-mode-buttons {
+  /* display: flex; */
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* 버튼 스타일 */
+.mypage_class button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  /* cursor: pointer; */
+}
+
+/* 변경 버튼 스타일 */
+.mypage_class button[type="button"] {
+  background-color: #6860a4;
+  color: #ffffff;
+}
+
+.modal .return_modal {
+  position: absolute;
+  top: 13%;
+  left: 30%;
+  padding: 30px;
+  width: 500px;
+  background-color: #ffffff;
+  border: #6860a4;
+  border-radius: 5%;
+  color: #000000;
+  box-shadow: 5px 5px 10px #ccc;
+}
+
+.modal .withdraw_modal {
+  position: absolute;
+  top: 13%;
+  left: 30%;
+  padding: 30px;
+  width: 500px;
+  background-color: #ffffff;
+  border: #6860a4;
+  border-radius: 5%;
+  color: #000000;
+  box-shadow: 5px 5px 10px #ccc;
+}
+
+.modal .return_modal h2 {
+  color: #6860a4;
+  text-align: center;
+}
+
+.modal .return_modal button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #6860a4;
+  justify-content: center;
+}
+
+.modal .return {
+  background-color: #6860a4;
+  border-color: #6860a4;
+  border-radius: 5px;
+  padding: 7px 20px 7px;
+  color: #ffffff;
+  box-shadow: 5px 5px 10px #ccc;
+  margin-right: 10px;
+  border: none;
+}
+
+.modal .close {
+  float: right;
+  background-color: #ffffff;
+  color: #6860a4;
+  border-color: #6860a4;
+  border-radius: 5px;
+  padding: 5px 20px;
+  border-color: #6860a4;
+  box-shadow: 5px 5px 10px #ccc;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.return_pop {
+  border: #6860a4;
+  color: #ffffff;
+  margin: 0px 50px 50px;
+}
+
+.delete-lockers {
+  background-color: #6860a4;
+  color: #ffffff;
+}
+
+.locker-info {
+  width: 435px;
+}

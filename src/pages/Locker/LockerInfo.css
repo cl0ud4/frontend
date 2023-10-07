@@ -1,0 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap");
+
+div.splitScreen {
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+
+  text-align: center;
+  font-size: 18px;
+}
+
+div.left {
+  float: left;
+  display: block;
+  width: 48%;
+  height: 100%;
+}
+
+#greetText {
+  margin-top: 50px;
+
+  font-size: 24px;
+  color: #6860a4;
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: bold;
+}
+
+#planeText {
+  font-size: 18px;
+  color: #6860a4;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+#locker_img {
+  margin-top: -20px;
+  margin-left: -40px;
+  margin-bottom: 30px;
+}
+
+div.right {
+  float: right;
+  width: 48%;
+  height: 100%;
+}
+
+.formLabel {
+  width: 200px;
+  margin-top: 25px;
+  float: left;
+  text-align: start;
+  font-size: 20px;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+.formControl {
+  margin-top: 5px;
+  height: 50px;
+
+  text-align: left;
+}
+
+div.bottomButtons {
+  margin-top: 20px;
+  position: absolute;
+  display: flex;
+}
+
+#cancelButton {
+  margin-top: 50px;
+  margin-left: 60px;
+
+  width: 210px;
+  height: 45px;
+
+  border-radius: 15px;
+
+  background-color: #f0f0f0;
+  color: black;
+
+  border: none;
+  font-size: 20px;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+#submitButton {
+  margin-top: 50px;
+
+  width: 210px;
+  height: 45px;
+
+  border: none;
+  border-radius: 15px;
+  background-color: #6860a4;
+
+  font-size: 20px;
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+.searchLockerForm {
+  width: 95%;
+}
+
+.searchControl {
+  float: right;
+  width: 150px !important;
+}
+
+.searchSubmit {
+  margin-left: 20px;
+  float: right;
+}
