@@ -102,11 +102,10 @@ export default function Signup() {
           studentId: userId,
         })
         .then((res) => {
-          Swal.fire("성공", "인증번호 메일 발송이 완료되었습니다.", "success");
           if (res.data.isSuccess === false) {
             setIsMailChecked(false);
-            alert(res.data.message);
-          }
+            Swal.fire("서버에러", "인증번호 메일 발송에 실패하였습니다.", "error");
+          } else Swal.fire("성공", "인증번호 메일 발송이 완료되었습니다.", "success");
         })
         .catch((error) => {
           setIsMailChecked(false);
