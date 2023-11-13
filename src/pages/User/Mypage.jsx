@@ -156,22 +156,34 @@ export default function Mypage() {
   }
 
   function handleDeleteAllLockers() {
-    // 서버에 사물함 삭제 요청 전송
-    Swal.fire("확인", "사물함 전체를 삭제합니다.", "info");
-
-    axios
-      .delete(`${process.env.REACT_APP_API_URL}/nemo/lockers`, {
-        headers: {
-          "nemo-access-token": userjwt,
-        },
-      })
-      .then((res) => {
-        setLockerInfo({ location: "", deposit: 0, row: 0, col: 0, order: "" });
-        if (res.data.isSuccess) {
-          Swal.fire("성공", "사물함 전체 삭제에 성공하였습니다.", "success");
-        }
-        navigate("/lockerinfo");
-      });
+    Swal.fire({
+      title: "정말로 삭제하시겠습니까?",
+      text: "사물함 전체를 삭제합니다",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 서버에 사물함 삭제 요청 전송
+        axios
+          .delete(`${process.env.REACT_APP_API_URL}/nemo/lockers`, {
+            headers: {
+              "nemo-access-token": userjwt,
+            },
+          })
+          .then((res) => {
+            console.log(res.data);
+            if (res.data.isSuccess) {
+              setLockerInfo({ location: "", deposit: 0, row: 0, col: 0, order: "" });
+              Swal.fire("사물함 삭제가 완료되었습니다", "사물함 재등록 페이지로 이동됩니다", "success");
+              navigate("/lockerinfo");
+            } else {
+              Swal.fire("실패", "모든 사물함에 대해 단 하나의 요청이라도 있으면 삭제할 수 없습니다. 다시 확인해주세요", "error");
+            }
+          });
+      }
+    });
   }
 
   // 탈퇴하기 버튼 클릭 시

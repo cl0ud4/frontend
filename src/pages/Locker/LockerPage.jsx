@@ -90,8 +90,8 @@ export default function LockerPage() {
 
   const statusText = (status) => {
     switch (status) {
-      case "empty":
-        return;
+      case "other":
+        return "사용 중단된 사물함입니다";
       case "request":
         return "대여가 신청된 사물함입니다";
       case "return":
@@ -99,22 +99,22 @@ export default function LockerPage() {
       case "using":
         return "사용중";
       default:
-        return "사용중단";
+        return "";
     }
   };
 
   const statusColor = (status) => {
     switch (status) {
-      case "empty":
-        return "#FFFFFF";
       case "request":
         return "#F4D364";
       case "return":
         return "#92E1D4";
       case "using":
         return "#8C52FF";
-      default:
+      case "other":
         return "#E05E76";
+      default:
+        return "#FFFFFF";
     }
   };
 
