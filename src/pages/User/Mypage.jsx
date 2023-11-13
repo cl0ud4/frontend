@@ -148,8 +148,7 @@ export default function Mypage() {
         if (res.data.isSuccess) {
           Swal.fire("성공", res.data.message, "success");
           setReturnLockerShowModal(false);
-          setLockerStatus("반납요청 중");
-          navigate("/mypage");
+          navigate("/locker");
         } else {
           Swal.fire("에러", res.data.message, "error");
         }
@@ -215,7 +214,7 @@ export default function Mypage() {
     } else if (lockerStatus === "return") {
       return "반납 요청중인 사물함";
     }
-    return "";
+    return "사용중인 사물함이 없습니다";
   }
 
   return (
@@ -305,10 +304,10 @@ export default function Mypage() {
             </div>
           )}
 
-          {lockerStatus === "using" || lockerStatus === "return" ? (
+          {lockerStatus === "using" ? (
             <>
               <button type="button" onClick={handleReturnLockerShowModal}>
-                {lockerStatus !== "return" ? "사물함 반납" : "반납요청 중"}
+                {"반납요청 하기"}
               </button>
               <div className="return_pop">
                 <Modal className="return_modal" show={returnLockerShowModal} onHide={handleReturnLockerCloseModal}>
@@ -357,7 +356,7 @@ export default function Mypage() {
                 <Modal.Title>회원탈퇴</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <p> 사물함 반납 후 회원 탈퇴가 가능합니다.</p>
+                <p> 사물함이 완전히 반납처리가 되어야 회원 탈퇴가 가능합니다.</p>
                 <p> 대여한 사물함을 반납해주시기 바랍니다.</p>
               </Modal.Body>
               <Modal.Footer>

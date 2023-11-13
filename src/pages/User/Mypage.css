@@ -33,12 +33,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  margin-top: 30px;
   font-family: "Nanum Gothic", sans-serif;
 }
 
 /* 폼 스타일 */
-form .mypage_class{
+form .mypage_class {
   width: 500px;
   padding: 20px;
   border-radius: 5px;
@@ -76,8 +76,8 @@ form .mypage_class{
 }
 
 .number_button {
-  float: right; 
-  margin-top: 30px ;  
+  float: right;
+  margin-top: 30px;
   background-color: #6860a4;
   color: #fff;
 }
