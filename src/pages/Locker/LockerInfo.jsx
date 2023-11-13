@@ -188,6 +188,7 @@ export default function LockerInfo() {
               <Form.Control
                 type="number"
                 name="row"
+                min="3"
                 onChange={handleOnChange}
                 placeholder="행 입력"
                 className="formControl"
@@ -204,6 +205,7 @@ export default function LockerInfo() {
               <Form.Control
                 type="number"
                 name="col"
+                min="3"
                 onChange={handleOnChange}
                 placeholder="열 입력"
                 className="formControl"
