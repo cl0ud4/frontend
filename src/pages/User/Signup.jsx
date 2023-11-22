@@ -1,11 +1,12 @@
 import "./Signup.css";
 import React from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Logo from "../../assets/images/signup_logo.png";
 import Swal from "sweetalert2";
+import { userSignup } from "../../api/userApi";
+import { adminSignup, mailCheck, mailSend } from "../../api/userApi.admin";
 
 export default function Signup() {
   const [userId, setUserId] = React.useState("");
@@ -22,7 +23,7 @@ export default function Signup() {
   let invalidFormMsg = "";
   const navigate = useNavigate();
 
-  function handleSignup(event) {
+  async function handleSignup(event) {
     event.preventDefault();
     const isValidForm = validateForm();
     if (isValidForm === false) {
@@ -39,106 +40,85 @@ export default function Signup() {
 
     // 관리자라면 관리자로 등록
     if (adminCheck === "1") {
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/signup/admin`, {
-          id: userId,
-          department: userDepartment,
-          password: userPassword,
-          permission: adminCheck,
-        })
-        .then((response) => {
-          const data = response.data;
-          if (data.isSuccess) {
-            Swal.fire("성공", "회원가입이 완료되었습니다. 관리자 계정은 승인 후 로그인할 수 있습니다.", "success");
-            navigate("/signin");
-          } else {
-            Swal.fire("에러", "회원가입에 실패하였습니다.", "error");
-          }
-        })
-        .catch((error) => {
-          console.error("에러 발생:", error);
-        });
+      const response = await adminSignup({
+        id: userId,
+        department: userDepartment,
+        password: userPassword,
+        permission: adminCheck,
+      });
+
+      const data = response.data;
+
+      if (data.isSuccess) {
+        Swal.fire(
+          "성공", "회원가입이 완료되었습니다. 관리자 계정은 승인 후 로그인할 수 있습니다.", "success"
+        );
+        navigate("/signin");
+      } else {
+        Swal.fire("에러", "회원가입에 실패하였습니다.", "error");
+      }
     } else {
       if (userPhoneNumber.length !== 11) {
         Swal.fire("입력 오류", "전화번호를 다시 입력해주세요.", "error");
         return;
       }
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/signup`, {
-          id: userId,
-          department: userDepartment,
-          phoneNumber: userPhoneNumber,
-          password: userPassword,
-          permission: adminCheck,
-        })
-        .then((response) => {
-          const data = response.data;
+      const response = await userSignup({
+        id: userId,
+        department: userDepartment,
+        phoneNumber: userPhoneNumber,
+        password: userPassword,
+        permission: adminCheck,
+      });
 
-          if (data.isSuccess) {
-            Swal.fire("성공", "회원가입이 완료되었습니다.", "success");
+      const data = response.data;
 
-            navigate("/signin");
-          } else if (data.code === 2022) {
-            Swal.fire("에러", "학과 사물함이 존재하지 않아 가입이 불가합니다.", "error");
-          } else {
-            Swal.fire("에러", data.message, "error");
-          }
-        })
-        .catch((error) => {
-          console.error("에러 발생:", error);
-        });
+      if (data.isSuccess) {
+        Swal.fire("성공", "회원가입이 완료되었습니다.", "success");
+
+        navigate("/signin");
+      } else if (data.code === 2022) {
+        Swal.fire(
+          "에러",
+          "학과 사물함이 존재하지 않아 가입이 불가합니다.",
+          "error"
+        );
+      } else {
+        Swal.fire("에러", data.message, "error");
+      }
     }
   }
 
-  function onClickSendMail() {
+  async function onClickSendMail() {
     // 메일 전송 버튼
     if (userId.length < 8 || userId.length > 9) {
       alert("학번을 다시 입력해주세요");
       setIsMailChecked(false);
       return;
     } else {
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/app/mail/send`, {
-          studentId: userId,
-        })
-        .then((res) => {
-          if (res.data.isSuccess === false) {
-            setIsMailChecked(false);
-            Swal.fire("서버에러", "인증번호 메일 발송에 실패하였습니다.", "error");
-          } else Swal.fire("성공", "인증번호 메일 발송이 완료되었습니다.", "success");
-        })
-        .catch((error) => {
-          setIsMailChecked(false);
-          alert(error);
-        });
+      const res = await mailSend(userId);
+      if (res.data.isSuccess === false) {
+        setIsMailChecked(false);
+        Swal.fire("서버에러", "인증번호 메일 발송에 실패하였습니다.", "error");
+      } else Swal.fire("성공", "인증번호 메일 발송이 완료되었습니다.", "success");
     }
   }
 
   function handleMailAuthenticationNumber(event) {
     setMailAuthenticationNumber(event.target.value);
   }
-  function onClickCheckAuthentication() {
+  async function onClickCheckAuthentication() {
     //인증번호 확인
     if (mailAuthenticationNumber.toString().length === 6) {
       // 인증번호는 6자리
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/app/mail/check`, {
-          studentId: userId,
-          mailAuthenticationNumber: mailAuthenticationNumber,
-        })
-        .then((res) => {
-          if (res.data.isSuccess === false) {
-            setIsMailChecked(false);
-            alert(res.data.message);
-          } else {
-            setIsMailChecked(true);
-            Swal.fire("성공", "인증이 완료되었습니다.", "success");
-          }
-        })
-        .catch((error) => {
-          setIsMailChecked(false);
-          alert(error);
-        });
+      const res = await mailCheck(userId, mailAuthenticationNumber);
+      console.log(res)
+      if (res.data.isSuccess === false) {
+        setIsMailChecked(false);
+        alert(res.data.message);
+      } else {
+        setIsMailChecked(true);
+        Swal.fire("성공", "인증이 완료되었습니다.", "success");
+      }
     } else {
       setIsMailChecked(false);
       alert("인증번호는 6자리입니다 다시 확인해주세요");

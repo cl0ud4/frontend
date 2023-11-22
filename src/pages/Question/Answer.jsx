@@ -1,16 +1,14 @@
 import "./QuestionView";
-import Axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useRecoilValue } from "recoil";
 import Swal from "sweetalert2";
 
 import Header from "../../components/Header/Header";
-import { userjwtAtom } from "../../recoil/user/atom";
+import { postQuestionAnswer } from "../../api/questionApi";
+import { getUser } from "../../api/userApi";
 
 const AnswerTemplete = () => {
-  const userjwt = useRecoilValue(userjwtAtom);
   const params = useParams();
 
   const question_id = params.question_id;
@@ -27,41 +25,12 @@ const AnswerTemplete = () => {
     created_date: "",
   });
 
-  const [viewContent, setViewContent] = useState([]);
-
-  useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/question/${question_id}/answer`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setViewContent(response.data.result);
-    });
-  }, []);
-
   const submitQuestion = async () => {
-    try {
-      Axios.post(
-        `${process.env.REACT_APP_API_URL}/question/${question_id}/answer`,
-        {
-          title: questionContent.title,
-          content: questionContent.content,
-          created_date: questionContent.created_date,
-        },
-        {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }
-      ).then((res) => {
-        if (res.data.isSuccess) {
-          Swal.fire("확인", "게시물이 등록되었습니다.", "success");
-          navigateToView();
-        } else Swal.fire("에러", res.data.message, "error");
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    const res = await postQuestionAnswer(question_id, questionContent);
+    if (res.data.isSuccess) {
+      Swal.fire("확인", "게시물이 등록되었습니다.", "success");
+      navigateToView();
+    } else Swal.fire("에러", res.data.message, "error");
   };
 
   const getValue = (e) => {
@@ -75,13 +44,12 @@ const AnswerTemplete = () => {
   // 유저 정보 가져오기
   const [userContent, setUserContent] = useState([]);
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setUserContent(response.data.result);
-    });
+    const getUserInfo = async() => {
+      const response = await getUser();
+      if (response.data.isSuccess) setUserContent(response.data.result);
+      else navigate("/signin");
+    }
+    getUserInfo();
   }, []);
 
   return (

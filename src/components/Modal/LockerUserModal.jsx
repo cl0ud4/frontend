@@ -1,22 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../recoil/locker/atom";
-import { userjwtAtom } from "../../recoil/user/atom";
+import { getUserLockerCheck, postLockerCancel, postLockerCancelReturn, postLockerRent, postLockerReturn } from "../../api/lockerApi";
 
 // 0: not mine, 1: mine, -1: no locker i rent
-async function isMyLocker(locker, user, userjwt) {
+async function isMyLocker(locker, user) {
   try {
     // 사용자가 대여한 사물함 조회
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/nemo/check`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    });
+    const res = await getUserLockerCheck();
     if (res.data.code === 3116) return -1;
     if (user.id === locker.fk_user_id) return 1;
   } catch (error) {
@@ -25,88 +19,41 @@ async function isMyLocker(locker, user, userjwt) {
   return 0;
 }
 
-async function emptyHandler(locker, userjwt) {
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/nemo/locker/rent/${locker.locker_id}`,
-      {},
-      {
-        headers: {
-          "nemo-access-token": userjwt,
-        },
-      }
-    );
-    if (res.data.isSuccess === false) {
-      throw new Error(res.data.message);
-    }
-    return "OK";
-  } catch (error) {
-    console.error(error);
-    return "KO";
+async function emptyHandler(locker) {
+  const res = await postLockerRent(locker.locker_id);
+    
+  if (res.data.isSuccess === false) {
+    return "KO"
   }
+  return "OK";
 }
 
-async function borrowHandler(locker, userjwt) {
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/nemo/locker/cancel/${locker.locker_id}`,
-      {},
-      {
-        headers: {
-          "nemo-access-token": userjwt,
-        },
-      }
-    );
-    if (res.data.isSuccess === false) {
-      throw new Error(res.data.message);
-    }
-    return "OK";
-  } catch (error) {
-    console.error(error);
-    return "KO";
+async function borrowHandler(locker) {
+  const res = await postLockerCancel(locker.locker_id);
+    
+  if (res.data.isSuccess === false) {
+    return "KO"
   }
+  return "OK";
 }
 
-async function returnHandler(locker, userjwt) {
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/nemo/locker/cancel-return/${locker.locker_id}`,
-      {},
-      {
-        headers: {
-          "nemo-access-token": userjwt,
-        },
-      }
-    );
-    if (res.data.isSuccess === false) {
-      throw new Error(res.data.message);
-    }
-    return "OK";
-  } catch (error) {
-    console.error(error);
-    return "KO";
+async function returnHandler(locker) {
+  const res = await postLockerCancelReturn(locker.locker_id);
+    
+  if (res.data.isSuccess === false) {
+    return "KO"
   }
+  return "OK";
 }
 
-async function usingHandler(locker, userjwt) {
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/nemo/locker/return/${locker.locker_id}`,
-      {},
-      {
-        headers: {
-          "nemo-access-token": userjwt,
-        },
-      }
-    );
-    if (res.data.isSuccess === false) {
-      throw new Error(res.data.message);
-    }
-    return "OK";
-  } catch (error) {
-    console.error(error);
-    return "KO";
+async function usingHandler(locker) {
+
+  const res = await postLockerReturn(locker.locker_id);
+    
+  if (res.data.isSuccess === false) {
+    return "KO"
   }
+  return "OK";
 }
 
 export default function LockerUserModal({ show, onHide, locker }) {
@@ -118,16 +65,11 @@ export default function LockerUserModal({ show, onHide, locker }) {
   const [infoStatus, setInfoStatus] = useState("접근 불가");
   const [infoMsg, setInfoMsg] = useState("대여한 사물함에만 접근하실 수 있습니다");
 
-  const [res, setRes] = useState("");
-
   const user = useRecoilValue(userAtom);
-  const userjwt = useRecoilValue(userjwtAtom);
-
-  const nav = useNavigate();
 
   const initText = async () => {
     try {
-      const myLockerStatus = await isMyLocker(locker, user, userjwt);
+      const myLockerStatus = await isMyLocker(locker, user);
       switch (locker.status) {
         case "empty": {
           if (myLockerStatus === -1) {
@@ -191,21 +133,23 @@ export default function LockerUserModal({ show, onHide, locker }) {
 
     switch (locker.status) {
       case "empty": {
-        ret = await emptyHandler(locker, userjwt);
+        ret = await emptyHandler(locker);
         break;
       }
       case "request": {
-        ret = await borrowHandler(locker, userjwt);
+        ret = await borrowHandler(locker);
         break;
       }
       case "return": {
-        ret = await returnHandler(locker, userjwt);
+        ret = await returnHandler(locker);
         break;
       }
       case "using": {
-        ret = await usingHandler(locker, userjwt);
+        ret = await usingHandler(locker);
         break;
       }
+      default:
+        break;
     }
     if (ret === "OK") {
       setShowToast(true);

@@ -1,4 +1,3 @@
-import Axios from "axios";
 import { useEffect, useState } from "react";
 import "./QuestionView.css";
 import { useParams } from "react-router-dom";
@@ -6,23 +5,23 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import NoticeAdminModal from "../../components/Modal/NoticeAdminModal";
-import { userjwtAtom } from "../../recoil/user/atom";
-import { useRecoilState } from "recoil";
 import Swal from "sweetalert2";
+import { getUser } from "../../api/userApi";
+import { getNotice, deleteNotice } from "../../api/noticeApi";
 
 // 문의글 뷰
 function NoticeView() {
-  const [userjwt, setUserjwt] = useRecoilState(userjwtAtom);
   const params = useParams();
   const [viewContent, setViewContent] = useState([]);
 
   const notice_id = params.notice_id;
-  const url = `${process.env.REACT_APP_API_URL}/notice/` + notice_id;
+
   useEffect(() => {
-    Axios.get(url).then((res) => {
+    const getNoticeone = async () => {
+      const res = await getNotice(notice_id);
       const loginError = "로그인을 해주세요."
       const boardError = "해당 게시물이 존재하지 않습니다."
-      if(Object.keys(res.data).length === 0 && userjwt === null) {
+      if(Object.keys(res.data).length === 0 && sessionStorage.getItem("jwt") === null) {
         Swal.fire("에러", loginError, "error");
         navigate('/signin')
       } else if(Object.keys(res.data).length === 0){
@@ -30,26 +29,22 @@ function NoticeView() {
         navigate('/board')
       }
       setViewContent(res.data);
-    });
+    }
+    getNoticeone();
   }, []);
 
   // 유저 정보 가져오기
   const [userContent, setUserContent] = useState([]);
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      if(response.data.isSuccess) setUserContent(response.data.result);
-      else navigate("/signin")
-    });
+    const getUserInfo = async() => {
+      const response = await getUser();
+      if (response.data.isSuccess) setUserContent(response.data.result);
+      else navigate("/signin");
+    }
+    getUserInfo();
   }, []);
 
   const navigate = useNavigate();
-  const navigateToAnswer = () => {
-    navigate(`/board/notice/${notice_id}`);
-  };
 
   const deleteBoard = async () => {
     Swal.fire({
@@ -59,19 +54,12 @@ function NoticeView() {
       showCancelButton: true,
       confirmButtonText: "Yes",
       cancelButtonText: "No",
-    }).then((result) => {
+    }).then(async(result) => {
       if (result.isConfirmed) {
-        Axios.delete(`${process.env.REACT_APP_API_URL}/notice/${notice_id}`, {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }).then((res) => {
-          // 확인 버튼이 클릭되었을 때의 동작을 여기에 작성한다.
+        const res = await deleteNotice(notice_id);
           Swal.fire("확인", "게시물이 삭제되었습니다.", "success");
           navigate("/board");
-        });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // 취소 버튼이 클릭되었을 때의 동작을 여기에 작성한다.
         Swal.fire("취소", "작업이 취소되었습니다.", "error");
       }
     });

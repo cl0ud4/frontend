@@ -1,16 +1,14 @@
-import Axios from "axios";
 import { useEffect, useState } from "react";
 import "./NoticeView";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
-import { userjwtAtom } from "../../recoil/user/atom";
-import { useRecoilState } from "recoil";
 import Header from "../../components/Header/Header";
 import Swal from "sweetalert2";
+import { postNotice } from "../../api/noticeApi";
+import { getUser } from "../../api/userApi";
 
 const NoticeTemplete = () => {
-  const [userjwt, setUserjwt] = useRecoilState(userjwtAtom);
 
   const navigate = useNavigate();
   const navigateToView = () => {
@@ -27,43 +25,16 @@ const NoticeTemplete = () => {
     created_date: "",
   });
 
-  const [viewContent, setViewContent] = useState([]);
-
-  useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/notice`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setViewContent(response.data.result);
-    });
-  }, []);
-
   const submitQuestion = async () => {
-    try {
-      Axios.post(
-        `${process.env.REACT_APP_API_URL}/notice/write`,
-        {
-          title: questionContent.title,
-          content: questionContent.content,
-          created_date: questionContent.created_date,
-        },
-        {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }
-      ).then((res) => {
-        if (res.data.isSuccess) {
-          const last_notice_id = res.data.result[0].notice_id;
-          Swal.fire("확인", "게시물이 등록되었습니다.", "success");
-          navigateToViewBoard(last_notice_id);
-        } else {
-          Swal.fire("에러", res.data.message, "error");
-        }
-      });
-    } catch (err) {
-      console.log(err);
+    console.log(questionContent)
+    const res = await postNotice(questionContent);
+    console.log(res)
+    if (res.data.isSuccess) {
+      const last_notice_id = res.data.result[0].notice_id;
+      Swal.fire("확인", "게시물이 등록되었습니다.", "success");
+      navigateToViewBoard(last_notice_id);
+    } else {
+      Swal.fire("에러", res.data.message, "error");
     }
   };
 
@@ -77,14 +48,13 @@ const NoticeTemplete = () => {
 
   // 유저 정보 가져오기
   const [userContent, setUserContent] = useState([]);
-  useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setUserContent(response.data.result);
-    });
+    useEffect(() => {
+    const getUserInfo = async() => {
+      const response = await getUser();
+      if (response.data.isSuccess) setUserContent(response.data.result);
+      else navigate("/signin");
+    }
+    getUserInfo();
   }, []);
 
   return (

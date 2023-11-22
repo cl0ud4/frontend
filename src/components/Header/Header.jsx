@@ -1,30 +1,21 @@
 import "./Header.css";
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { askMenuAtom, lockerMenuAtom, mypageMenuAtom } from "../../recoil/menu/atom";
-import { userAtom } from "../../recoil/locker/atom";
-import { userjwtAtom } from "../../recoil/user/atom";
-import axios from "axios";
+import { logout } from "../../api/userApi";
 
 export default function Header(props) {
   const [askMenu, setAskMenu] = useRecoilState(askMenuAtom);
   const [lockerMenu, setLockerMenu] = useRecoilState(lockerMenuAtom);
   const [mypageMenu, setMypageMenu] = useRecoilState(mypageMenuAtom);
-  const [user, setUser] = useRecoilState(userAtom);
-  const [userjwt, setUserjwt] = useRecoilState(userjwtAtom);
   const navigate = useNavigate();
 
-  const handleOnClickLogout = () => {
-    axios
-      .patch(`${process.env.REACT_APP_API_URL}/logout`)
-      .then((res) => {
-        setUserjwt(null);
-        navigate("/signin");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const handleOnClickLogout = async () => {
+    const res = await logout();
+
+    sessionStorage.clear();
+    navigate("/signin");
   };
 
   const handleOnClickAsk = () => {

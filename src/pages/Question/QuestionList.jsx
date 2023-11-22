@@ -1,24 +1,19 @@
 import { Component } from "react";
-import Axios from "axios";
 import { Link  } from "react-router-dom";
 import "./QuestionList.css";
 import Pagination from "./QuestionPaging";
 import WriteButton from "./WriteButton";
 import Header from "../../components/Header/Header";
 import { Helmet } from "react-helmet-async";
-import { userjwtAtom } from "../../recoil/user/atom"; // jwt 정보 정의 파일
-import { useRecoilValue } from "recoil";
+import { getQuestionListCnt, getQuestionListFilter } from "../../api/questionApi";
+import { getNoticeList } from "../../api/noticeApi";
+import { getUser } from "../../api/userApi";
 
-var userjwt = null;
 const depList = {
   computerEngineering: "컴퓨터공학과",
   schoolOfAI: "AI융합학부"
 };
 
-function JwtDisplay() {
-  userjwt = useRecoilValue(userjwtAtom);
-  return userjwt;
-}
 
 const Board = ({ no, id, title, created_date, department, state }) => {
   return (
@@ -64,49 +59,26 @@ class BoardList extends Component {
     pageNum: 0,
   };
 
-  getListCnt = () => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/question/cnt?department=${this.state.department}`, {})
-      .then((res) => {
-        const length = res.data.result[0].cnt;
-
-        this.setState({
-          pageCnt: length,
-        });
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+  getListCnt = async() => {
+    const res = await getQuestionListCnt(this.state.department);
+    const length = await res.data.result[0].cnt;
+    this.setState({
+      pageCnt: length,
+    });
   };
 
-  getNotice = () => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/notice`, {})
-      .then((res) => {
-        const { data } = res;
-        this.setState({
-          noticeList: data,
-        });
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+  getNotice = async() => {
+    const res = await getNoticeList();
+    this.setState({
+      noticeList: res.data,
+    });
   };
 
-  getUser = () => {
-    <JwtDisplay />;
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    })
-      .then((res) => {
-        const { data } = res;
-        this.setState({
-          userContent: data.result,
-        });
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+  getUser = async() => {
+    const res = await getUser();
+    this.setState({
+      userContent: res.data.result,
+    });
   };
 
   componentDidMount() {
@@ -135,17 +107,11 @@ class BoardList extends Component {
     });
   };
 
-  getList = () => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/question?department=${this.state.department}`, {})
-      .then((res) => {
-        const { data } = res;
-        this.setState({
-          boardList: data,
-        });
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+  getList = async() => {
+    const res = await getQuestionListFilter(this.state.department);
+    this.setState({
+      boardList: res.data,
+    });
   };
 
   /**
@@ -160,7 +126,7 @@ class BoardList extends Component {
     return (
       <div>
         <div className="jwt-hidden">
-          <JwtDisplay />
+          {/* <JwtDisplay /> */}
         </div>
 
         <Header id={isContent ? userContent.id : ""} />

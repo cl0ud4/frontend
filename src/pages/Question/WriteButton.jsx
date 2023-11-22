@@ -1,14 +1,11 @@
 import "./QuestionView.css";
 import { useNavigate } from "react-router-dom";
-import { userjwtAtom } from "../../recoil/user/atom";
-import Axios from "axios";
-import { useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import NoticeButton from "./NoticeButton";
 import Swal from "sweetalert2";
+import { getUser } from "../../api/userApi";
 
 const WriteButton = () => {
-  const userjwt = useRecoilValue(userjwtAtom);
   const navigate = useNavigate();
 
   const navigateToWrite = () => {
@@ -16,18 +13,16 @@ const WriteButton = () => {
   };
   const [userContent, setUserContent] = useState([]);
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
+    const usercheck = async () => {
+      const response = await getUser();
       const loginError = "로그인을 해주세요."
-      if(Object.keys(!response.data.isSuccess) && userjwt === null) {
+      if(Object.keys(!response.data.isSuccess) && sessionStorage.getItem("jwt") === null) {
         Swal.fire("에러", loginError, "error");
         navigate('/signin')
       } 
       if(response.data.isSuccess) setUserContent(response.data.result);
-    });
+    }
+    usercheck();
   }, []);
 
   return (

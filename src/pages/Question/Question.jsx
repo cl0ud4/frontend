@@ -1,16 +1,14 @@
-import Axios from "axios";
 import { useEffect, useState } from "react";
 import "./QuestionView";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
-import { userjwtAtom } from "../../recoil/user/atom";
-import { useRecoilState } from "recoil";
 import Header from "../../components/Header/Header";
 import Swal from "sweetalert2";
-const QuestionTemplete = () => {
-  const [userjwt, setUserjwt] = useRecoilState(userjwtAtom);
+import { getUser } from "../../api/userApi";
+import { postQuestion } from "../../api/questionApi";
 
+const QuestionTemplete = () => {
   const navigate = useNavigate();
   const navigateToView = () => {
     navigate("/board");
@@ -26,43 +24,14 @@ const QuestionTemplete = () => {
     created_date: "",
   });
 
-  const [viewContent, setViewContent] = useState([]);
-
-  useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/question`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setViewContent(response.data.result);
-    });
-  }, []);
-
   const submitQuestion = async () => {
-    try {
-      Axios.post(
-        `${process.env.REACT_APP_API_URL}/question/writing`,
-        {
-          title: questionContent.title,
-          content: questionContent.content,
-          created_date: questionContent.created_date,
-        },
-        {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }
-      ).then((res) => {
-        if (res.data.isSuccess) {
-          const last_question_id = res.data.result[0].question_id;
-          Swal.fire("확인", "게시물이 등록되었습니다.", "success");
-          navigateToViewBoard(last_question_id);
-        } else {
-          Swal.fire("에러", res.data.message, "error");
-        }
-      });
-    } catch (err) {
-      console.log(err);
+    const res = await postQuestion(questionContent);
+    if (res.data.isSuccess) {
+      const last_question_id = res.data.result[0].question_id;
+      Swal.fire("확인", "게시물이 등록되었습니다.", "success");
+      navigateToViewBoard(last_question_id);
+    } else {
+      Swal.fire("에러", res.data.message, "error");
     }
   };
 
@@ -77,18 +46,17 @@ const QuestionTemplete = () => {
   // 유저 정보 가져오기
   const [userContent, setUserContent] = useState([]);
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setUserContent(response.data.result);
-    });
+    const getUserInfo = async() => {
+      const response = await getUser();
+      if (response.data.isSuccess) setUserContent(response.data.result);
+      else navigate("/signin");
+    }
+    getUserInfo();
   }, []);
 
   return (
     <>
-      <Header id={typeof userContent === null ? "" : userContent.id} />
+      <Header id={userContent.length === 0 ? "" : userContent.id} />
       <div className="Question-App">
         <Helmet>
           <title>문의글 작성하기 - 네모의 꿈</title>

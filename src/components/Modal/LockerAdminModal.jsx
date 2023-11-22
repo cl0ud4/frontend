@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import axios from "axios";
-
 import WarningToast from "../Toast/WarningToast";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { userjwtAtom } from "../../recoil/user/atom";
+import { useRecoilState } from "recoil";
 import { showWraningToastATom } from "../../recoil/menu/atom";
+import { patchLocker } from "../../api/lockerApi";
 
 export default function LockerAdminModal({ show, onHide, locker }) {
   const [lockerId, setLockerId] = useState(locker.locker_id);
@@ -19,50 +16,26 @@ export default function LockerAdminModal({ show, onHide, locker }) {
   const [warningStatus, setWarningStatus] = useState("");
   const [warningMsg, setWarningMsg] = useState("");
 
-  const userjwt = useRecoilValue(userjwtAtom);
-
-  const nav = useNavigate();
-
-  const handleOnSubmit = (event) => {
+  const handleOnSubmit = async(event) => {
     event.preventDefault();
 
-    axios
-      .patch(
-        `${process.env.REACT_APP_API_URL}/nemo/locker/${lockerId}`,
-        {
-          userId: userId,
-          note: note,
-          status: status,
-        },
-        {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.isSuccess === false) {
-          throw {
-            res: res.data,
-            error: new Error(),
-          };
-        } else {
-          onHide();
-        }
-      })
-      .catch(({ res, error }) => {
-        if (showToast) {
-          setShowToast(false);
-        }
-        if (res) {
-          setWarningStatus(res.code);
-          setWarningMsg(res.message);
-        } else {
-          setWarningMsg("변경 실패");
-          setWarningMsg("사물함 상태 변경에 실패하였습니다. 잘못 입력된 값이 없는지 확인해주세요");
-        }
-        setShowToast(true);
-      });
+    const res = await patchLocker(lockerId, userId, note, status);
+
+    if (res.data.isSuccess === false) {
+      if (showToast) {
+        setShowToast(false);
+      }
+      if (res) {
+        setWarningStatus(res.code);
+        setWarningMsg(res.message);
+      } else {
+        setWarningMsg("변경 실패");
+        setWarningMsg("사물함 상태 변경에 실패하였습니다. 잘못 입력된 값이 없는지 확인해주세요");
+      }
+      setShowToast(true);
+    } else {
+      onHide();
+    }
   };
 
   return (

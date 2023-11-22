@@ -1,18 +1,18 @@
 import "./LockerInfo.css";
 import { Form, Button } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import axios from "axios";
+import { useRecoilState } from "recoil";
 
 import { useNavigate } from "react-router-dom";
 
 import { lockerInfoAtom, userAtom } from "../../recoil/locker/atom";
-import { userjwtAtom } from "../../recoil/user/atom";
 import ErrorToast from "../../components/Toast/ErrorToast";
 import image from "../../assets/images/locker_img.png";
 
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import { postLockersInfo } from "../../api/lockerApi";
+import { getUser } from "../../api/userApi";
 
 function textValidator(text) {
   if (text.trim().length < 1) return false;
@@ -36,39 +36,29 @@ export default function LockerInfo() {
   const [recoilLockerInfo, setRecoilLockerInfo] = useRecoilState(lockerInfoAtom);
 
   const [user, setUser] = useRecoilState(userAtom);
-  const userjwt = useRecoilValue(userjwtAtom);
 
   useEffect(() => {
-    if (userjwt === null) {
+    if (sessionStorage.getItem("jwt") === null) {
       nav("/signin");
       Swal.fire("에러", "로그인을 해주세요.", "error");
     }
     if (!user) {
-      axios
-        .get(`${process.env.REACT_APP_API_URL}/app/user`, {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        })
-        .then((res) => {
-          if (res.data.isSuccess !== 200) {
-            setErrorStatus(res.code);
-            setErrorMsg("학과를 찾을 수 없습니다");
-            setShowToast(true);
-          }
-          setUser(res.data.result);
-        })
-        .catch((error) => {
+      const usercheck = async () => {
+        const res = await getUser();
+        if (res.data.isSuccess !== 200) {
+          setErrorStatus(res.code);
+          setErrorMsg("학과를 찾을 수 없습니다");
           setShowToast(true);
-          setErrorStatus(error.code);
-          setErrorMsg(error.name);
-        });
+        }
+        setUser(res.data.result);
+      }
+      usercheck();
     }
   }, []);
 
   const nav = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.stopPropagation();
     event.preventDefault();
 
@@ -76,36 +66,16 @@ export default function LockerInfo() {
 
     if (form.checkValidity()) {
       setValidated(true);
-      axios
-        .post(
-          `${process.env.REACT_APP_API_URL}/nemo/lockers-info`,
-          {
-            location: recoilLockerInfo.location,
-            deposit: recoilLockerInfo.deposit,
-            row: recoilLockerInfo.row,
-            col: recoilLockerInfo.col,
-            order: recoilLockerInfo.order,
-          },
-          {
-            headers: {
-              "nemo-access-token": userjwt,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.data.isSuccess === false) {
-            setErrorStatus(res.data.code);
-            setErrorMsg(res.data.message);
-            setShowToast(true);
-            throw new Error("POST FAILED");
-          }
-        })
-        .then(() => {
-          nav("/lockernumbers", { replace: true });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      const res = await postLockersInfo(recoilLockerInfo);
+      
+      if (res.data.isSuccess === false) {
+        setErrorStatus(res.data.code);
+        setErrorMsg(res.data.message);
+        setShowToast(true);
+        throw new Error("POST FAILED");
+      }
+
+      nav("/lockernumbers", { replace: true });
     } else {
       setErrorStatus("NOT_VALID_INPUT");
       setErrorMsg("폼의 입력이 올바르지 않습니다");
