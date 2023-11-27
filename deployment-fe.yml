@@ -16,22 +16,10 @@ spec:
         - name: pod-fe
           image: yuje123/fe:0.1
           ports:
-        - containerPort: 3000
-      # readinessProbe:
-      #   httpGet:
-      #     path: /
-      #     port: 3000
-      #   initialDelaySeconds: 10
-      #   periodSeconds: 10
-      # livenessProbe:
-      #   httpGet:
-      #     path: /
-      #     port: 3000
-      #   initialDelaySeconds: 5
-      #   periodSeconds: 5
-      env:
-        - name: REACT_APP_API_URL # 컨테이너 환경변수명
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: react_app_api_url
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_API_URL # 컨테이너 환경변수명
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: react_app_api_url

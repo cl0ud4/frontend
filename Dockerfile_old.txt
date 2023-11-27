@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 node:16
+
+COPY . /app
+WORKDIR /app
+
+RUN npm cache clean --force && rm -rf node_modules && rm -rf package-locker.json
+
+RUN npm install --save --legacy-peer-deps
+
+EXPOSE 3000
+
+CMD ["/usr/local/bin/npm", "start"]
