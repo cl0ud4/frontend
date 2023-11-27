@@ -2,10 +2,8 @@ import "./LockerNumbers.css";
 
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import axios from "axios";
 
-import { adminAtom, lockerInfoAtom, lockerIdsAtom, idArrayAtom } from "../../recoil/locker/atom";
-import { userjwtAtom } from "../../recoil/user/atom";
+import { lockerInfoAtom, lockerIdsAtom, idArrayAtom } from "../../recoil/locker/atom";
 import { useNavigate } from "react-router-dom";
 import WarningToast from "../../components/Toast/WarningToast";
 
@@ -16,18 +14,17 @@ import Card from "react-bootstrap/Card";
 
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import { postLockerInfo } from "../../api/lockerApi";
 
 export default function LockerNumbers() {
   const [showToast, setShowToast] = useState(false);
 
   const lockerInfo = useRecoilValue(lockerInfoAtom);
-  const admin = useRecoilValue(adminAtom);
+
   // 기본 배열로 초기화, 추후 최종 배열
   const [lockerIds, setLockerIds] = useRecoilState(lockerIdsAtom);
   // 입력으로 업데이트 되는 배열
   const [idArray, setIdArray] = useRecoilState(idArrayAtom);
-
-  const userjwt = useRecoilValue(userjwtAtom);
 
   const nav = useNavigate();
 
@@ -60,7 +57,7 @@ export default function LockerNumbers() {
   };
 
   useEffect(() => {
-    if(userjwt===null) {
+    if(sessionStorage.getItem("jwt") === null) {
       Swal.fire("에러", "로그인을 해주세요.", "error");
       nav('/signin')
     }
@@ -76,31 +73,13 @@ export default function LockerNumbers() {
     setIdArray(newLockerIds);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/nemo/lockers-info/number`,
-        {
-          lockerIds: idArray,
-        },
-        {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.isSuccess === false) {
-          throw new Error("LOCKERS INFO POST FAILED");
-        }
-      })
-      .then(() => {
-        nav("/locker", { replace: true });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const res = await postLockerInfo(idArray);
+    if (res.data.isSuccess === false) {
+      throw new Error("LOCKERS INFO POST FAILED");
+    }
+    nav("/locker", { replace: true });
   };
 
   const gridInputs = () => {

@@ -1,45 +1,35 @@
-import Axios from "axios";
 import { useEffect, useState } from "react";
 import "./QuestionView.css";
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { userjwtAtom } from "../../recoil/user/atom";
 import Swal from "sweetalert2";
+import { getUser } from "../../api/userApi";
+import { deleteQuestionAnswer, getQuestionAnswer } from "../../api/questionApi";
 
 function AnswerView() {
-  const [userjwt, setUserjwt] = useRecoilState(userjwtAtom);
   const params = useParams();
   const [viewContent, setViewContent] = useState([]);
   const navigate = useNavigate();
 
   const question_id = params.question_id;
 
-  const url = `${process.env.REACT_APP_API_URL}/question/` + question_id + "/answer";
   useEffect(() => {
-    Axios.get(url).then(
-      (res) => {
-        setViewContent(res.data);
-      },
-      {
-        headers: {
-          "nemo-access-token": userjwt,
-        },
-      }
-    );
+    const getQna = async() => {
+      const response = await getQuestionAnswer(question_id);
+      setViewContent(response.data);
+    }
+    getQna();
   }, []);
 
   // 유저 정보 가져오기
   const [userContent, setUserContent] = useState([]);
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-      headers: {
-        "nemo-access-token": userjwt,
-      },
-    }).then((response) => {
-      setUserContent(response.data.result);
-    });
+    const getUserInfo = async() => {
+      const response = await getUser();
+      if (response.data.isSuccess) setUserContent(response.data.result);
+      else navigate("/signin");
+    }
+    getUserInfo();
   }, []);
 
   const deleteBoard = async () => {
@@ -50,19 +40,12 @@ function AnswerView() {
       showCancelButton: true,
       confirmButtonText: "Yes",
       cancelButtonText: "No",
-    }).then((result) => {
+    }).then(async(result) => {
       if (result.isConfirmed) {
-        Axios.delete(`${process.env.REACT_APP_API_URL}/question/${question_id}/answer`, {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }).then((res) => {
-          // 확인 버튼이 클릭되었을 때의 동작을 여기에 작성한다.
-          Swal.fire("확인", "게시물이 삭제되었습니다.", "success");
-          navigate("/board");
-        });
+        const res = await deleteQuestionAnswer(question_id);
+        Swal.fire("확인", "게시물이 삭제되었습니다.", "success");
+        navigate("/board");
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // 취소 버튼이 클릭되었을 때의 동작을 여기에 작성한다.
         Swal.fire("취소", "작업이 취소되었습니다.", "error");
       }
     });

@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
-import { RecoilRoot, useRecoilState } from "recoil";
-import { userjwtAtom } from "./recoil/user/atom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 import Mypage from "./pages/User/Mypage";
 import Signup from "./pages/User/Signup";

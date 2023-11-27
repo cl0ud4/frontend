@@ -1,14 +1,12 @@
 import "./LockerPage.css";
 import React, { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
-import axios from "axios";
 
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import WarningToast from "../../components/Toast/WarningToast";
 
 import { userAtom, lockerInfoAtom, lockerListAtom } from "../../recoil/locker/atom";
-import { userjwtAtom } from "../../recoil/user/atom";
 import { useLockerMenu } from "../../recoil/menu/useMenu";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +19,7 @@ import Header from "../../components/Header/Header";
 import { showInfoToastATom, showWraningToastATom } from "../../recoil/menu/atom";
 import InfoToast from "../../components/Toast/InfoToast";
 import Swal from "sweetalert2";
+import { getLockersDepartment } from "../../api/lockerApi";
 
 export default function LockerPage() {
   const [isChanged, setIsChanged] = useState(true);
@@ -40,43 +39,31 @@ export default function LockerPage() {
   const lockerInfo = useRecoilValue(lockerInfoAtom);
   const [lockerList, setLockerList] = useRecoilState(lockerListAtom);
 
-  const userjwt = useRecoilValue(userjwtAtom);
   const { setAskMenu, setLockerMenu, setMypageMenu } = useLockerMenu();
 
   const nav = useNavigate();
 
-  const initLockerList = () => {
+  const initLockerList = async() => {
     if (isChanged) {
-      axios
-        .get(`${process.env.REACT_APP_API_URL}/nemo/lockers?department=${user.department}`, {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        })
-        .then((res) => {
-          if (userjwt === null) {
-            Swal.fire("에러", "로그인을 해주세요.", "error");
-            nav("/signin");
-          }
-          if (res.data.code === 3104) {
-            nav("/lockerinfo", { replace: true });
-            return;
-          }
-          if (!res.data.isSuccess) {
-            setStatus(res.code);
-            setMsg(res.message);
-            setShowToast(true);
-            setShowRecoilToast(true);
-          } else {
-            setLockerList(res.data.result);
-          }
-        })
-        .catch((error) => {
-          setStatus(error.code);
-          setMsg(error.name);
-          setShowToast(true);
-          setShowRecoilToast(true);
-        });
+      const res = await getLockersDepartment(user.department);
+
+      if (sessionStorage.getItem("jwt") === null) {
+        Swal.fire("에러", "로그인을 해주세요.", "error");
+        nav("/signin");
+      }
+      if (res.data.code === 3104) {
+        nav("/lockerinfo", { replace: true });
+        return;
+      }
+      if (!res.data.isSuccess) {
+        setStatus(res.code);
+        setMsg(res.message);
+        setShowToast(true);
+        setShowRecoilToast(true);
+      } else {
+        setLockerList(res.data.result);
+      }
+
       setIsChanged(false);
     }
   };

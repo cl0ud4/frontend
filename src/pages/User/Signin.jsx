@@ -1,18 +1,17 @@
 import "./Signin.css";
-import React, { useEffect } from "react";
+import React from "react";
 import logo from "../../assets/images/nemo_logo.png";
 import { Form } from "react-bootstrap";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { lockerInfoAtom, userAtom } from "../../recoil/locker/atom";
-import { userjwtAtom } from "../../recoil/user/atom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import { signin, getUser } from "../../api/userApi";
+import { getLockersDepInfo } from "../../api/lockerApi";
 
 export default function Signin() {
   const [user, setUser] = useRecoilState(userAtom);
-  const [userjwt, setUserjwt] = useRecoilState(userjwtAtom);
   const [userId, setUserId] = React.useState("");
   const [userPassword, setUserPassword] = React.useState("");
 
@@ -28,22 +27,19 @@ export default function Signin() {
     event.preventDefault();
 
     try {
-      const signInResponse = await axios.post(`${process.env.REACT_APP_API_URL}/signin`, { id: userId, password: userPassword });
+      const signInResponse = await signin(userId, userPassword);
 
       const data = signInResponse.data;
 
       if (data.isSuccess) {
         Swal.fire("성공", "로그인이 완료되었습니다.", "success");
-        setUserjwt(data.result.jwt);
-        const userRes = await axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-          headers: {
-            "nemo-access-token": data.result.jwt,
-          },
-        });
+        // await setUserjwt(data.result.jwt);
+        await sessionStorage.setItem("jwt", data.result.jwt);
+
+        const userRes = await getUser();
+        console.log(userRes)
         setUser(userRes.data.result);
-        const lockersInfoResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/nemo/lockers-info?department=${userRes.data.result.department}`
-        );
+        const lockersInfoResponse = await getLockersDepInfo(userRes.data.result.department);
         if (lockersInfoResponse.data.isSuccess) {
           setLockerInfo(lockersInfoResponse.data.result);
           navigate("/locker");
@@ -52,7 +48,7 @@ export default function Signin() {
             setLockerInfo({ location: "", deposit: 0, row: 0, col: 0, order: "" });
             navigate("/lockerinfo");
           } else {
-            setUserjwt(null);
+            sessionStorage.clear();
             navigate("/signin");
             Swal.fire("실패", "학과의 사물함이 존재하지 않습니다. 관리자에게 문의해주십시오", "error");
           }

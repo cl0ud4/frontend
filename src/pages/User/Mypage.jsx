@@ -1,16 +1,15 @@
 import "./Mypage.css";
 import React from "react";
 import { Form, Modal } from "react-bootstrap";
-import axios from "axios";
 import { useEffect } from "react";
-import { useRecoilValue } from "recoil";
-import { userjwtAtom } from "../../recoil/user/atom";
 import { lockerInfoAtom } from "../../recoil/locker/atom";
 import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "../../components/Header/Header";
 import Swal from "sweetalert2";
+import { deleteLocker, getLockersDepInfo, getUserLockerCheck, postLockerReturn } from "../../api/lockerApi";
+import { getUser, patchDeleteUser, patchUserPhone } from "../../api/userApi";
 
 export default function Mypage() {
   const [userId, setUserId] = React.useState("");
@@ -29,7 +28,6 @@ export default function Mypage() {
   const setLockerInfo = useSetRecoilState(lockerInfoAtom);
   const [lockerStatus, setLockerStatus] = React.useState("");
 
-  const userjwt = useRecoilValue(userjwtAtom);
   const navigate = useNavigate();
 
   // 사용자 전화번호 변경 입력 처리
@@ -39,46 +37,32 @@ export default function Mypage() {
     setUserPhoneNumber(phoneNumber);
   }
 
-  function handleUserPhoneNumberSubmit(event) {
+  async function handleUserPhoneNumberSubmit(event) {
     event.preventDefault();
 
     // 전화번호 11자리 미만 입력 시 경고창 표시
     if (userPhoneNumber.length !== 11 || isNaN(userPhoneNumber)) {
       Swal.fire("입력 오류", "전화번호 11자리를 입력해주세요. 숫자만 입력 가능합니다.", "error");
     } else {
-      axios
-        .patch(
-          `${process.env.REACT_APP_API_URL}/app/user`,
-          { phoneNumber: userPhoneNumber },
-          {
-            headers: {
-              "nemo-access-token": userjwt,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.status.isSuccess) {
-            Swal.fire("에러", "전화번호 변경에 실패하였습니다.", "error");
-          } else {
-            Swal.fire("성공", "전화번호 변경에 성공하였습니다.", "success");
-          }
-        });
+      const res = await patchUserPhone(userPhoneNumber);
+      
+      if (res.status.isSuccess) {
+        Swal.fire("에러", "전화번호 변경에 실패하였습니다.", "error");
+      } else {
+        Swal.fire("성공", "전화번호 변경에 성공하였습니다.", "success");
+      }
     }
   }
 
   useEffect(() => {
-    if (userjwt === null) {
+    if (sessionStorage.getItem("jwt") === null) {
       navigate("/signin");
       Swal.fire("에러", "로그인을 해주세요.", "error");
     }
 
     const fetchData = async () => {
       try {
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/app/user`, {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        });
+        const userResponse = await getUser();
         const { id, department, phoneNumber, permission } = userResponse.data.result;
 
         setUserId(id);
@@ -86,23 +70,18 @@ export default function Mypage() {
         setUserPhoneNumber(phoneNumber);
         setUserPermission(permission);
 
-        const lockerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/nemo/check`, {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        });
+        const lockerResponse = await getUserLockerCheck();
 
-        await axios.get(`${process.env.REACT_APP_API_URL}/nemo/lockers-info?department=${department}`).then((res) => {
-          if (res.data.isSuccess) {
-            setLockerDeposit(res.data.result.deposit);
-            setUserDeposit(res.data.result.deposit);
-            setLockerLocation(res.data.result.location);
-            setLockerRow(res.data.result.row);
-            setLockerCol(res.data.result.col);
-          } else {
-            setUserDepartment("");
-          }
-        });
+        const res = await getLockersDepInfo(department);
+        if (res.data.isSuccess) {
+          setLockerDeposit(res.data.result.deposit);
+          setUserDeposit(res.data.result.deposit);
+          setLockerLocation(res.data.result.location);
+          setLockerRow(res.data.result.row);
+          setLockerCol(res.data.result.col);
+        } else {
+          setUserDepartment("");
+        }
 
         if (lockerResponse.data && lockerResponse.data.result) {
           setUserLocker(lockerResponse.data.result.locker_id);
@@ -116,7 +95,7 @@ export default function Mypage() {
     };
 
     fetchData();
-  }, [userjwt]);
+  }, []);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -132,30 +111,20 @@ export default function Mypage() {
     setReturnLockerShowModal(false);
   }
 
-  function handleReturnLocker() {
+  async function handleReturnLocker() {
     // 서버에 사물함 반납 요청 전송
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/nemo/locker/return/${userLocker}`,
-        {},
-        {
-          headers: {
-            "nemo-access-token": userjwt,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.isSuccess) {
-          Swal.fire("성공", res.data.message, "success");
-          setReturnLockerShowModal(false);
-          navigate("/locker");
-        } else {
-          Swal.fire("에러", res.data.message, "error");
-        }
-      });
+    const res = await postLockerReturn(userLocker);
+
+    if (res.data.isSuccess) {
+      Swal.fire("성공", res.data.message, "success");
+      setReturnLockerShowModal(false);
+      navigate("/locker");
+    } else {
+      Swal.fire("에러", res.data.message, "error");
+    }
   }
 
-  function handleDeleteAllLockers() {
+  async function handleDeleteAllLockers() {
     Swal.fire({
       title: "정말로 삭제하시겠습니까?",
       text: "사물함 전체를 삭제합니다",
@@ -163,53 +132,34 @@ export default function Mypage() {
       showCancelButton: true,
       confirmButtonText: "삭제",
       cancelButtonText: "취소",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         // 서버에 사물함 삭제 요청 전송
-        axios
-          .delete(`${process.env.REACT_APP_API_URL}/nemo/lockers`, {
-            headers: {
-              "nemo-access-token": userjwt,
-            },
-          })
-          .then((res) => {
-            console.log(res.data);
-            if (res.data.isSuccess) {
-              setLockerInfo({ location: "", deposit: 0, row: 0, col: 0, order: "" });
-              Swal.fire("사물함 삭제가 완료되었습니다", "사물함 재등록 페이지로 이동됩니다", "success");
-              navigate("/lockerinfo");
-            } else {
-              Swal.fire("실패", "모든 사물함에 대해 단 하나의 요청이라도 있으면 삭제할 수 없습니다. 다시 확인해주세요", "error");
-            }
-          });
+        const res = await deleteLocker();
+        if (res.data.isSuccess) {
+          setLockerInfo({ location: "", deposit: 0, row: 0, col: 0, order: "" });
+          Swal.fire("사물함 삭제가 완료되었습니다", "사물함 재등록 페이지로 이동됩니다", "success");
+          navigate("/lockerinfo");
+        } else {
+          Swal.fire("실패", "모든 사물함에 대해 단 하나의 요청이라도 있으면 삭제할 수 없습니다. 다시 확인해주세요", "error");
+        }
       }
     });
   }
 
   // 탈퇴하기 버튼 클릭 시
-  function handleWithdrawShowModal() {
+  async function handleWithdrawShowModal() {
     if (userLocker.length !== 0) {
       setWithdrawShowModal(true); // 탈퇴하기 모달을 표시하기 위해 상태를 true로 설정
     } else {
       // 서버에 회원탈퇴 요청 전송
-      axios
-        .patch(
-          `${process.env.REACT_APP_API_URL}/user/goodbye`,
-          { id: userId },
-          {
-            headers: {
-              "nemo-access-token": userjwt,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.data.isSuccess) {
-            Swal.fire("성공", "회원탈퇴가 완료되었습니다.", "success");
-            navigate("/signin");
-          } else {
-            Swal.fire("에러", "회원 탈퇴에 실패하였습니다. ", "error");
-          }
-        });
+      const res = await patchDeleteUser(userId);
+      if (res.data.isSuccess) {
+        Swal.fire("성공", "회원탈퇴가 완료되었습니다.", "success");
+        navigate("/signin");
+      } else {
+        Swal.fire("에러", "회원 탈퇴에 실패하였습니다. ", "error");
+      }
     }
   }
 
