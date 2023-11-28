@@ -1,15 +1,16 @@
-FROM node:14
+FROM node:14.19.1
 
 WORKDIR /app
-
 COPY package.json .
-
-RUN npm cache clean --force
-RUN npm install --force
-RUN npm i react-scripts
-
+RUN npm install
 COPY . .
+
+RUN npm i -D react-refresh 
+# RUN npm install react-scripts@3.0.1 -g
+
+
+ENV FAST_REFRESH false
 
 EXPOSE 3000
 
-ENTRYPOINT ["npm", "start"]
+CMD ["npm", "start"]
