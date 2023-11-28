@@ -7,6 +7,8 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# 개발이 끝나지 않았으므로 build 제거
+build
 node_modules
 package-lock.json
 

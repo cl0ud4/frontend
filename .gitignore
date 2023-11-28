@@ -2,6 +2,10 @@
 /dist
 /node_modules
 /src/.devcontainer
+
+# 개발이 끝나지 않았으므로 build
+/build
+
 # Logs
 logs
 *.log

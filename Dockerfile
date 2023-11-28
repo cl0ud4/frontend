@@ -1,13 +1,15 @@
-FROM --platform=linux/amd64 node:16
+FROM node:14
 
 WORKDIR /app
 
 COPY package.json .
 
-RUN npm install --save --legacy-peer-deps
+RUN npm cache clean --force
+RUN npm install --force
+RUN npm i react-scripts
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+ENTRYPOINT ["npm", "start"]
