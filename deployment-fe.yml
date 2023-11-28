@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: deployment-fe
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: fe
@@ -15,8 +15,6 @@ spec:
       containers:
         - name: pod-fe
           image: yuje123/fe:0.4
-          ports:
-            - containerPort: 3000
           env:
             - name: REACT_APP_API_URL # 컨테이너 환경변수명
               valueFrom:
