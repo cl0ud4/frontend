@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
     - name: pod-fe
-      image: yuje123/fe:0.1
+      image: yuje123/test:0.1
       ports:
         - containerPort: 3000
       # readinessProbe:
