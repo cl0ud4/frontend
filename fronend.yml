@@ -1,32 +1,19 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-spec:
-  type: LoadBalancer
-  selector:
-    app: frontend
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: nemo-react
 spec:
   replicas: 1
   selector:
-      matchLabels:
-        app: frontend
+    matchLabels:
+      app: nemo-react
   template: # pod 템플릿
     metadata:
       labels:
-        app: frontend # pod의 라벨
+        app: nemo-react # pod의 라벨
     spec:
       containers:
-        - name: frontend
+        - name: nemo-react
           image: yuje123/fe:0.6
           ports:
             - containerPort: 3000
@@ -36,3 +23,17 @@ spec:
                 configMapKeyRef:
                   name: env-config
                   key: react_app_api_url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nemo-react
+spec:
+  type: LoadBalancer
+  selector:
+    app: nemo-react
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
