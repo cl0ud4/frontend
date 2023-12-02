@@ -3,8 +3,7 @@
 /node_modules
 /src/.devcontainer
 
-# 개발이 끝나지 않았으므로 build
-/build
+package-lock.json
 
 # Logs
 logs
