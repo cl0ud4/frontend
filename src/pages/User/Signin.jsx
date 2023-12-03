@@ -27,6 +27,7 @@ export default function Signin() {
     event.preventDefault();
 
     try {
+      console.log(process.env.REACT_APP_API_URL);
       const signInResponse = await signin(userId, userPassword);
 
       const data = signInResponse.data;
@@ -37,7 +38,7 @@ export default function Signin() {
         await sessionStorage.setItem("jwt", data.result.jwt);
 
         const userRes = await getUser();
-        console.log(userRes)
+        console.log(userRes);
         setUser(userRes.data.result);
         const lockersInfoResponse = await getLockersDepInfo(userRes.data.result.department);
         if (lockersInfoResponse.data.isSuccess) {
