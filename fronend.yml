@@ -22,7 +22,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: env-config
-                  key: react_app_api_url
+                  key: REACT_APP_API_URL
 ---
 apiVersion: v1
 kind: Service
