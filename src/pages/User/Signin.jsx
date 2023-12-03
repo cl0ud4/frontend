@@ -27,7 +27,6 @@ export default function Signin() {
     event.preventDefault();
 
     try {
-      console.log(process.env.REACT_APP_API_URL);
       const signInResponse = await signin(userId, userPassword);
 
       const data = signInResponse.data;
